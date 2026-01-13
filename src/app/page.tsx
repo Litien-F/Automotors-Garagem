@@ -1,8 +1,8 @@
-import Header from '@/frontend/components/organisms/Header/Header';
-import Hero from '@/frontend/components/organisms/Hero/Hero';
-import ProductsSection from '@/frontend/components/organisms/ProductsSection/ProductsSection';
-import AboutSection from '@/frontend/components/organisms/AboutSection/AboutSection';
-import Footer from '@/frontend/components/organisms/Footer/Footer';
+import Header from '@/components/organisms/Header/Header';
+import Hero from '@/components/organisms/Hero/Hero';
+import ProductsSection from '@/components/organisms/ProductsSection/ProductsSection';
+import AboutSection from '@/components/organisms/AboutSection/AboutSection';
+import Footer from '@/components/organisms/Footer/Footer';
 
 /**
  * Página Principal - Home
