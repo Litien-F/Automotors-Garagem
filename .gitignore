@@ -1,0 +1,156 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ============================================
+# SEGURANÇA - NUNCA COMMITAR
+# ============================================
+
+# Variáveis de ambiente (CREDENCIAIS)
+.env
+.env*.local
+.env.development
+.env.production
+.env.test
+
+# Arquivos de configuração sensíveis
+config/database.yml
+config/secrets.yml
+
+# ============================================
+# DOCUMENTAÇÃO INTERNA (NÃO PUBLICAR)
+# ============================================
+
+# Changelog interno
+CHANGELOG.md
+LIMPEZA_COMPLETA_REALIZADA.md
+
+# Documentação interna sensível
+documentation/CONFIGURACAO_COMPLETA.md
+documentation/CORRECAO_BIGINT.md
+
+# ============================================
+# DEPENDÊNCIAS
+# ============================================
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+package-lock.json
+
+# ============================================
+# BUILD E CACHE
+# ============================================
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+
+# ============================================
+# TYPESCRIPT
+# ============================================
+
+*.tsbuildinfo
+next-env.d.ts
+
+# ============================================
+# PRISMA
+# ============================================
+
+# Migrations (podem conter dados sensíveis)
+prisma/migrations/
+
+# ============================================
+# LOGS E DEBUG
+# ============================================
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Logs
+logs
+*.log
+
+# ============================================
+# IDEs E EDITORES
+# ============================================
+
+# VSCode
+.vscode/
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# SISTEMA OPERACIONAL
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# OUTROS
+# ============================================
+
+# Vercel
+.vercel
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Certificados
+*.pem
+*.key
+*.cert
+*.crt
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar

@@ -1,0 +1,294 @@
+// Automotors Garagem - Database Schema
+// Banco de dados PostgreSQL com Prisma ORM
+// IDs AUTO-INCREMENTADOS (BIGINT)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== ENUMS ====================
+
+enum VehicleType {
+  CAR        // Carro
+  MOTORCYCLE // Moto
+  TRUCK      // Caminhão
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  MANAGER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// ==================== MODELS ====================
+
+// Usuários do sistema
+model User {
+  id            BigInt    @id @default(autoincrement())
+  email         String    @unique @db.VarChar(255)
+  name          String    @db.VarChar(255)
+  password      String    @db.VarChar(255)
+  role          UserRole  @default(CUSTOMER)
+  cpf           String?   @unique @db.VarChar(14)
+  phone         String?   @db.VarChar(20)
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  addresses     Address[]
+  orders        Order[]
+  cartItems     CartItem[]
+  
+  @@map("users")
+}
+
+// Endereços dos usuários
+model Address {
+  id            BigInt   @id @default(autoincrement())
+  userId        BigInt   @map("user_id")
+  street        String   @db.VarChar(255)
+  number        String   @db.VarChar(20)
+  complement    String?  @db.VarChar(100)
+  neighborhood  String   @db.VarChar(100)
+  city          String   @db.VarChar(100)
+  state         String   @db.VarChar(2)
+  zipCode       String   @map("zip_code") @db.VarChar(10)
+  isDefault     Boolean  @default(false) @map("is_default")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders        Order[]
+  
+  @@map("addresses")
+}
+
+// Montadoras (Ford, Chevrolet, Honda, etc.)
+model Manufacturer {
+  id            BigInt    @id @default(autoincrement())
+  name          String    @unique @db.VarChar(100)
+  slug          String    @unique @db.VarChar(100)
+  logoUrl       String?   @map("logo_url")
+  country       String?   @db.VarChar(100)
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  vehicles      Vehicle[]
+  
+  @@map("manufacturers")
+}
+
+// Veículos (Modelos específicos)
+model Vehicle {
+  id              BigInt       @id @default(autoincrement())
+  manufacturerId  BigInt       @map("manufacturer_id")
+  name            String       @db.VarChar(100)
+  slug            String       @db.VarChar(100)
+  type            VehicleType
+  imageUrl        String?      @map("image_url")
+  
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  manufacturer    Manufacturer @relation(fields: [manufacturerId], references: [id], onDelete: Cascade)
+  variants        VehicleVariant[]
+  compatibilities VehicleCompatibility[]
+  
+  @@unique([manufacturerId, slug])
+  @@map("vehicles")
+}
+
+// Variantes de Veículos (Ano + Modelo específico)
+model VehicleVariant {
+  id              BigInt    @id @default(autoincrement())
+  vehicleId       BigInt    @map("vehicle_id")
+  year            Int
+  model           String?   @db.VarChar(50)
+  engineType      String?   @map("engine_type") @db.VarChar(50)
+  fuelType        String?   @map("fuel_type") @db.VarChar(30)
+  
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  vehicle         Vehicle   @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  compatibilities VehicleCompatibility[]
+  
+  @@unique([vehicleId, year, model])
+  @@map("vehicle_variants")
+}
+
+// Categorias de Produtos
+model Category {
+  id            BigInt    @id @default(autoincrement())
+  name          String    @unique @db.VarChar(100)
+  slug          String    @unique @db.VarChar(100)
+  description   String?
+  imageUrl      String?   @map("image_url")
+  parentId      BigInt?   @map("parent_id")
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  parent        Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children      Category[] @relation("CategoryHierarchy")
+  products      Product[]
+  
+  @@map("categories")
+}
+
+// Produtos (Peças)
+model Product {
+  id              BigInt    @id @default(autoincrement())
+  sku             String    @unique @db.VarChar(50)
+  name            String    @db.VarChar(255)
+  slug            String    @unique @db.VarChar(255)
+  description     String?
+  price           Decimal   @db.Decimal(10, 2)
+  compareAtPrice  Decimal?  @map("compare_at_price") @db.Decimal(10, 2)
+  stock           Int       @default(0)
+  isActive        Boolean   @default(true) @map("is_active")
+  isFeatured      Boolean   @default(false) @map("is_featured")
+  isRare          Boolean   @default(false) @map("is_rare")
+  
+  // Especificações técnicas
+  brand           String?   @db.VarChar(100)
+  partNumber      String?   @map("part_number") @db.VarChar(100)
+  weight          Decimal?  @db.Decimal(8, 2)
+  
+  // SEO
+  metaTitle       String?   @map("meta_title") @db.VarChar(255)
+  metaDescription String?   @map("meta_description")
+  
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  categoryId      BigInt    @map("category_id")
+  category        Category  @relation(fields: [categoryId], references: [id])
+  images          ProductImage[]
+  compatibilities VehicleCompatibility[]
+  orderItems      OrderItem[]
+  cartItems       CartItem[]
+  
+  @@map("products")
+}
+
+// Imagens dos Produtos
+model ProductImage {
+  id            BigInt   @id @default(autoincrement())
+  productId     BigInt   @map("product_id")
+  url           String
+  alt           String?  @db.VarChar(255)
+  order         Int      @default(0)
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  // Relacionamentos
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@map("product_images")
+}
+
+// Compatibilidade entre Produtos e Veículos
+model VehicleCompatibility {
+  id              BigInt          @id @default(autoincrement())
+  productId       BigInt          @map("product_id")
+  vehicleId       BigInt          @map("vehicle_id")
+  variantId       BigInt?         @map("variant_id")
+  
+  notes           String?
+  
+  createdAt       DateTime        @default(now()) @map("created_at")
+  
+  // Relacionamentos
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  vehicle         Vehicle         @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  variant         VehicleVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  
+  @@unique([productId, vehicleId, variantId])
+  @@map("vehicle_compatibilities")
+}
+
+// Carrinho de Compras
+model CartItem {
+  id            BigInt   @id @default(autoincrement())
+  userId        BigInt   @map("user_id")
+  productId     BigInt   @map("product_id")
+  quantity      Int      @default(1)
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+// Pedidos
+model Order {
+  id              BigInt      @id @default(autoincrement())
+  userId          BigInt      @map("user_id")
+  addressId       BigInt      @map("address_id")
+  orderNumber     String      @unique @map("order_number") @db.VarChar(50)
+  status          OrderStatus @default(PENDING)
+  
+  subtotal        Decimal     @db.Decimal(10, 2)
+  shippingCost    Decimal     @map("shipping_cost") @db.Decimal(10, 2)
+  discount        Decimal     @default(0) @db.Decimal(10, 2)
+  total           Decimal     @db.Decimal(10, 2)
+  
+  notes           String?
+  
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user            User        @relation(fields: [userId], references: [id])
+  address         Address     @relation(fields: [addressId], references: [id])
+  items           OrderItem[]
+  
+  @@map("orders")
+}
+
+// Itens do Pedido
+model OrderItem {
+  id            BigInt   @id @default(autoincrement())
+  orderId       BigInt   @map("order_id")
+  productId     BigInt   @map("product_id")
+  quantity      Int
+  unitPrice     Decimal  @map("unit_price") @db.Decimal(10, 2)
+  subtotal      Decimal  @db.Decimal(10, 2)
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  // Relacionamentos
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product  @relation(fields: [productId], references: [id])
+  
+  @@map("order_items")
+}
