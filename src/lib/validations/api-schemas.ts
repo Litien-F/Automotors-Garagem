@@ -13,7 +13,12 @@ export const paginationSchema = z.object({
 
 // Schema para busca de produtos em destaque
 export const featuredProductsSchema = z.object({
-  limit: z.coerce.number().int().positive().max(50).default(8),
+  limit: z
+    .string()
+    .nullable()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : 8))
+    .pipe(z.number().int().positive().max(50)),
 });
 
 // Schema para busca de produtos
