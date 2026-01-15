@@ -27,14 +27,14 @@
   overflow: hidden;
 }
 
-.image img {
+.imageElement {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform var(--transition-slow);
 }
 
-.card:hover .image img {
+.card:hover .imageElement {
   transform: scale(1.1);
 }
 
