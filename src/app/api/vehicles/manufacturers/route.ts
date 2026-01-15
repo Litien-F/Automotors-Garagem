@@ -1,13 +1,36 @@
 import { NextRequest } from 'next/server';
 import { vehicleRepository } from '@/lib/repositories/VehicleRepository';
 import { jsonResponse } from '@/utils/bigint-serializer';
+import { rateLimiter, RATE_LIMITS } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
+import { handleApiError } from '@/lib/error-handler';
 
 /**
  * API Route: GET /api/vehicles/manufacturers
- * Lista fabricantes de veículos
+ * Lista todos os fabricantes de veículos
  */
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const rateLimit = await rateLimiter.check(request, RATE_LIMITS.PUBLIC);
+    if (!rateLimit.success) {
+      logger.warn('Rate limit excedido', {
+        path: '/api/vehicles/manufacturers',
+        remaining: rateLimit.remaining,
+      });
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Muitas requisições',
+          message: 'Por favor, aguarde antes de tentar novamente',
+        },
+        429
+      );
+    }
+
+    logger.apiRequest('GET', '/api/vehicles/manufacturers');
+
+    // Buscar fabricantes
     const manufacturers = await vehicleRepository.findAllManufacturers();
 
     return jsonResponse({
@@ -15,15 +38,9 @@ export async function GET(request: NextRequest) {
       data: manufacturers,
     });
   } catch (error) {
-    console.error('Erro ao buscar fabricantes:', error);
-
-    return jsonResponse(
-      {
-        success: false,
-        error: 'Erro ao buscar fabricantes',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      },
-      500
-    );
+    return handleApiError(error, {
+      method: 'GET',
+      path: '/api/vehicles/manufacturers',
+    });
   }
 }

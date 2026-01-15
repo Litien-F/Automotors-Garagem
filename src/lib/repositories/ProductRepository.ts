@@ -115,7 +115,7 @@ export class ProductRepository {
   /**
    * Busca produto por ID com todas as relações
    */
-  async findById(id: string): Promise<ProductWithImages | null> {
+  async findById(id: bigint): Promise<ProductWithImages | null> {
     const product = await prisma.product.findUnique({
       where: { id },
       include: {
@@ -225,7 +225,7 @@ export class ProductRepository {
   /**
    * Verifica disponibilidade em estoque
    */
-  async checkStock(productId: string, quantity: number): Promise<boolean> {
+  async checkStock(productId: bigint, quantity: number): Promise<boolean> {
     const product = await prisma.product.findUnique({
       where: { id: productId },
       select: { stock: true },

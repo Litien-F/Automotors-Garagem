@@ -27,7 +27,7 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--spacing-xl);
 }
 
@@ -37,19 +37,362 @@
   background: rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius-xl);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-primary-500);
+  box-shadow: 0 10px 40px rgba(249, 115, 22, 0.3);
+}
+
+.iconWrapper {
+  position: relative;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--spacing-md);
 }
 
 .icon {
-  font-size: 3rem;
-  margin-bottom: var(--spacing-md);
+  font-size: 4rem;
+  transition: all 0.3s ease;
 }
 
 .card h3 {
   font-size: var(--font-size-xl);
   margin-bottom: var(--spacing-sm);
+  transition: color 0.3s ease;
+}
+
+.card:hover h3 {
+  color: var(--color-primary-500);
 }
 
 .card p {
   color: var(--text-secondary);
   margin: 0;
+  transition: all 0.3s ease;
+}
+
+.textHighlight {
+  color: var(--color-primary-500) !important;
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-lg) !important;
+}
+
+/* ========================================
+   ANIMAÇÃO 1: ESCUDO COM BRILHO OFUSCANTE
+   ======================================== */
+
+.iconShield {
+  animation: shieldPulse 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 20px rgba(249, 115, 22, 0.8));
+}
+
+@keyframes shieldPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.5));
+  }
+  50% {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 30px rgba(249, 115, 22, 1));
+  }
+}
+
+.shieldGlow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.6) 0%, transparent 70%);
+  animation: glowExpand 1.5s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes glowExpand {
+  0% {
+    width: 80px;
+    height: 80px;
+    opacity: 1;
+  }
+  100% {
+    width: 200px;
+    height: 200px;
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   ANIMAÇÃO 2: CAMINHÃO ENTREGANDO PARA PESSOA
+   ======================================== */
+
+.deliveryScene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: visible;
+  padding: 0 5%;
+}
+
+/* PESSOA - Aguardando na ESQUERDA */
+.person {
+  position: absolute;
+  left: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  opacity: 0.5;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+  z-index: 1;
+  filter: grayscale(50%);
+}
+
+.personReceiving {
+  opacity: 1;
+  filter: grayscale(0%);
+  animation: personJump 0.6s ease 2.8s;
+}
+
+@keyframes personJump {
+  0%, 100% { transform: translateY(-50%); }
+  50% { transform: translateY(-70px); }
+}
+
+/* CAIXA - CAI NO CAMINHÃO e DESAPARECE */
+.package {
+  position: absolute;
+  right: 15%;
+  top: 10%;
+  font-size: 2rem;
+  opacity: 1;
+  z-index: 3;
+}
+
+.packageFalling {
+  animation: packageFallAndDisappear 1.2s ease-in forwards;
+}
+
+@keyframes packageFallAndDisappear {
+  0% { 
+    top: 10%;
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  40% {
+    top: 35%;
+    opacity: 0.8;
+    transform: scale(0.95) rotate(180deg);
+  }
+  70% {
+    top: 50%;
+    opacity: 0.4;
+    transform: scale(0.7) rotate(360deg);
+  }
+  100% { 
+    top: 55%;
+    opacity: 0;
+    transform: scale(0.3) rotate(540deg);
+  }
+}
+
+/* CONTAINER DO CAMINHÃO - Começa na DIREITA, vai para ESQUERDA */
+.truckContainer {
+  position: absolute;
+  right: 10%;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: right 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 2;
+}
+
+.truckMoving {
+  right: 60%;
+  transition-delay: 1.2s;
+}
+
+/* CAMINHÃO - Virado para a ESQUERDA com bounce */
+.truck {
+  font-size: 3rem;
+  display: inline-block;
+}
+
+.truckMoving .truck {
+  animation: truckBounce 0.3s ease-in-out infinite;
+}
+
+@keyframes truckBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* FUMAÇA - Sai de trás do caminhão (agora à DIREITA) */
+.smoke1,
+.smoke2,
+.smoke3 {
+  position: absolute;
+  font-size: 1.5rem;
+  opacity: 0;
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.truckMoving ~ .smoke1,
+.truckMoving .smoke1 {
+  animation: smokeEffectReverse 1.2s ease-out 1.2s infinite;
+}
+
+.truckMoving ~ .smoke2,
+.truckMoving .smoke2 {
+  animation: smokeEffectReverse 1.2s ease-out 1.6s infinite;
+}
+
+.truckMoving ~ .smoke3,
+.truckMoving .smoke3 {
+  animation: smokeEffectReverse 1.2s ease-out 2s infinite;
+}
+
+.smoke1 {
+  animation: smokeEffectReverse 1.2s ease-out 1.2s infinite;
+}
+
+.smoke2 {
+  animation: smokeEffectReverse 1.2s ease-out 1.6s infinite;
+}
+
+.smoke3 {
+  animation: smokeEffectReverse 1.2s ease-out 2s infinite;
+}
+
+@keyframes smokeEffectReverse {
+  0% {
+    right: -20px;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.5);
+  }
+  20% {
+    opacity: 0.8;
+  }
+  100% {
+    right: -60px;
+    opacity: 0;
+    transform: translateY(-50%) scale(1.5);
+  }
+}
+
+/* ========================================
+   ANIMAÇÃO 3: ATENDENTE CONVERSANDO COM CLIENTE
+   ======================================== */
+
+.supportScene {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+
+.agent {
+  font-size: 3.5rem;
+  transition: all 0.3s ease;
+  transform-origin: bottom center;
+}
+
+.agentTalking {
+  animation: agentNod 0.8s ease-in-out infinite;
+}
+
+@keyframes agentNod {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+.speechBubble {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  font-size: 2.5rem;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  opacity: 0;
+}
+
+.bubbleActive {
+  transform: translateX(-50%) scale(1);
+  opacity: 1;
+  animation: bubbleBounce 1s ease-in-out infinite;
+}
+
+@keyframes bubbleBounce {
+  0%, 100% { transform: translateX(-50%) scale(1) translateY(0); }
+  50% { transform: translateX(-50%) scale(1.1) translateY(-10px); }
+}
+
+.customer {
+  font-size: 3rem;
+  transition: all 0.3s ease;
+  opacity: 0.6;
+  filter: grayscale(100%);
+}
+
+.customerHappy {
+  opacity: 1;
+  filter: grayscale(0%);
+  animation: customerSmile 0.6s ease 0.3s;
+}
+
+@keyframes customerSmile {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .iconWrapper {
+    height: 100px;
+  }
+  
+  .icon {
+    font-size: 3rem;
+  }
+  
+  .truck {
+    font-size: 2.5rem;
+  }
+  
+  .person {
+    font-size: 2.5rem;
+  }
+  
+  .package {
+    font-size: 1.5rem;
+  }
+  
+  .smoke1, .smoke2, .smoke3 {
+    font-size: 1rem;
+  }
+  
+  .agent, .customer {
+    font-size: 2.5rem;
+  }
 }

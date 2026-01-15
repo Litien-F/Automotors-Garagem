@@ -28,8 +28,8 @@ export class VehicleRepository {
   /**
    * Busca veículos por montadora
    */
-  async findVehiclesByManufacturer(
-    manufacturerId: string,
+  async findByManufacturer(
+    manufacturerId: bigint,
     type?: VehicleType
   ) {
     return prisma.vehicle.findMany({
@@ -51,7 +51,7 @@ export class VehicleRepository {
   /**
    * Busca variantes (anos/modelos) por veículo
    */
-  async findVariantsByVehicle(vehicleId: string) {
+  async findVariantsByVehicle(vehicleId: bigint) {
     return prisma.vehicleVariant.findMany({
       where: { vehicleId },
       orderBy: { year: 'desc' },
@@ -68,7 +68,7 @@ export class VehicleRepository {
   /**
    * Busca anos disponíveis para um veículo
    */
-  async findYearsByVehicle(vehicleId: string): Promise<number[]> {
+  async findYearsByVehicle(vehicleId: bigint): Promise<number[]> {
     const variants = await prisma.vehicleVariant.findMany({
       where: { vehicleId },
       select: { year: true },
@@ -82,7 +82,7 @@ export class VehicleRepository {
   /**
    * Busca hierarquia completa (Montadora -> Veículo -> Variantes)
    */
-  async findVehicleHierarchy(vehicleId: string) {
+  async findVehicleHierarchy(vehicleId: bigint) {
     const vehicle = await prisma.vehicle.findUnique({
       where: { id: vehicleId },
       include: {

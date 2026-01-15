@@ -1,48 +1,67 @@
 import { NextRequest } from 'next/server';
 import { productRepository } from '@/lib/repositories/ProductRepository';
 import { jsonResponse } from '@/utils/bigint-serializer';
+import { searchProductsSchema } from '@/lib/validations/api-schemas';
+import { rateLimiter, RATE_LIMITS } from '@/lib/rate-limit';
+import { logger } from '@/lib/logger';
+import { handleApiError } from '@/lib/error-handler';
 
 /**
  * API Route: GET /api/products/search
- * Busca produtos com filtros
+ * Busca produtos com filtros avançados
+ * 
+ * Query params:
+ * - query: termo de busca
+ * - categoryId, manufacturerId, vehicleId, variantId: filtros
+ * - minPrice, maxPrice: faixa de preço
+ * - inStock, isRare: filtros booleanos
+ * - page, limit: paginação
+ * - sortBy, sortOrder: ordenação
  */
 export async function GET(request: NextRequest) {
   try {
+    // Rate limiting
+    const rateLimit = await rateLimiter.check(request, RATE_LIMITS.SEARCH);
+    if (!rateLimit.success) {
+      logger.warn('Rate limit excedido', {
+        path: '/api/products/search',
+        remaining: rateLimit.remaining,
+      });
+      return jsonResponse(
+        {
+          success: false,
+          error: 'Muitas requisições',
+          message: 'Por favor, aguarde antes de tentar novamente',
+        },
+        429
+      );
+    }
+
+    // Validação de entrada
     const searchParams = request.nextUrl.searchParams;
-    
-    const filters = {
-      query: searchParams.get('query') || undefined,
-      categoryId: searchParams.get('categoryId') ? BigInt(searchParams.get('categoryId')!) : undefined,
-      minPrice: searchParams.get('minPrice') ? Number(searchParams.get('minPrice')) : undefined,
-      maxPrice: searchParams.get('maxPrice') ? Number(searchParams.get('maxPrice')) : undefined,
-      inStock: searchParams.get('inStock') === 'true',
-    };
+    const params = Object.fromEntries(searchParams.entries());
+    const validatedParams = searchProductsSchema.parse(params);
 
-    const page = Number(searchParams.get('page')) || 1;
-    const limit = Number(searchParams.get('limit')) || 12;
+    logger.apiRequest('GET', '/api/products/search', {
+      query: validatedParams.query,
+      filters: {
+        categoryId: validatedParams.categoryId?.toString(),
+        inStock: validatedParams.inStock,
+      },
+    });
 
-    const result = await productRepository.search(filters, page, limit);
+    // Buscar produtos
+    const result = await productRepository.searchProducts(validatedParams);
 
     return jsonResponse({
       success: true,
-      data: result.products,
-      pagination: {
-        page: result.page,
-        limit: result.limit,
-        total: result.total,
-        totalPages: result.totalPages,
-      },
+      data: result.data,
+      pagination: result.pagination,
     });
   } catch (error) {
-    console.error('Erro ao buscar produtos:', error);
-
-    return jsonResponse(
-      {
-        success: false,
-        error: 'Erro ao buscar produtos',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      },
-      500
-    );
+    return handleApiError(error, {
+      method: 'GET',
+      path: '/api/products/search',
+    });
   }
 }

@@ -22,10 +22,15 @@ config/secrets.yml
 # Changelog interno
 CHANGELOG.md
 LIMPEZA_COMPLETA_REALIZADA.md
+RELATORIO_REVISAO_CODIGO.md
+CORRECOES_APLICADAS.md
 
 # Documentação interna sensível
 documentation/CONFIGURACAO_COMPLETA.md
 documentation/CORRECAO_BIGINT.md
+documentation/SEGURANCA_VERIFICADA.md
+documentation/GUIA_PUBLICACAO_GITHUB.md
+documentation/COMANDOS_FINAIS_GITHUB.md
 
 # ============================================
 # DEPENDÊNCIAS
