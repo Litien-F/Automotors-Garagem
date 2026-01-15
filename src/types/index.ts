@@ -51,6 +51,7 @@ export interface ProductWithImages {
   price: number
   compareAtPrice: number | null
   stock: number
+  weight: number | null
   isActive: boolean
   isFeatured: boolean
   isRare: boolean
