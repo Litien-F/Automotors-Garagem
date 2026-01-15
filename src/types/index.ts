@@ -22,10 +22,10 @@ export interface PaginatedResponse<T> {
 // ==================== Search & Filter Types ====================
 
 export interface SearchFilters {
-  manufacturerId?: string
-  vehicleId?: string
-  variantId?: string
-  categoryId?: string
+  manufacturerId?: bigint
+  vehicleId?: bigint
+  variantId?: bigint
+  categoryId?: bigint
   minPrice?: number
   maxPrice?: number
   inStock?: boolean
@@ -43,7 +43,7 @@ export interface SearchParams extends SearchFilters {
 // ==================== Product Types ====================
 
 export interface ProductWithImages {
-  id: string
+  id: bigint
   sku: string
   name: string
   slug: string
@@ -57,13 +57,13 @@ export interface ProductWithImages {
   brand: string | null
   partNumber: string | null
   images: {
-    id: string
+    id: bigint
     url: string
     alt: string | null
     order: number
   }[]
   category: {
-    id: string
+    id: bigint
     name: string
     slug: string
   }
@@ -73,18 +73,18 @@ export interface ProductWithImages {
 
 export interface VehicleHierarchy {
   manufacturer: {
-    id: string
+    id: bigint
     name: string
     slug: string
   }
   vehicle: {
-    id: string
+    id: bigint
     name: string
     slug: string
     type: VehicleType
   }
   variants: {
-    id: string
+    id: bigint
     year: number
     model: string | null
     engineType: string | null
@@ -94,10 +94,10 @@ export interface VehicleHierarchy {
 // ==================== Cart Types ====================
 
 export interface CartItemWithProduct {
-  id: string
+  id: bigint
   quantity: number
   product: {
-    id: string
+    id: bigint
     name: string
     price: number
     stock: number
@@ -124,10 +124,10 @@ export interface SelectOption {
 // ==================== Form Types ====================
 
 export interface SearchFormData {
-  manufacturerId: string
-  vehicleId: string
+  manufacturerId: bigint
+  vehicleId: bigint
   year: number
-  variantId?: string
+  variantId?: bigint
 }
 
 export { VehicleType, OrderStatus, UserRole }
