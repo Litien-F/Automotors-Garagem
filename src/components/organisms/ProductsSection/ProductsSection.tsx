@@ -83,18 +83,21 @@ export const ProductsSection: React.FC = () => {
         
         {!isLoading && !error && products.length > 0 && (
           <div className={styles.grid}>
-            {products.map(product => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                description={product.description || undefined}
-                price={product.price}
-                imageUrl={product.images[0]?.url}
-                stock={product.stock}
-                isFeatured={product.isFeatured}
-              />
-            ))}
+            {products.map(product => {
+              console.log('🖼️ Produto:', product.name, 'URL:', product.images[0]?.url);
+              return (
+                <ProductCard
+                  key={product.id}
+                  id={product.id}
+                  name={product.name}
+                  description={product.description || undefined}
+                  price={product.price}
+                  imageUrl={product.images[0]?.url}
+                  stock={product.stock}
+                  isFeatured={product.isFeatured}
+                />
+              );
+            })}
           </div>
         )}
       </div>

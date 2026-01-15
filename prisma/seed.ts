@@ -237,7 +237,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://placehold.co/600x400/1a1a1a/f97316?text=Pastilha+Freio',
+              url: 'https://via.placeholder.com/600x400/1a1a1a/f97316?text=Pastilha+Freio',
               alt: 'Pastilha de Freio Dianteira',
               order: 0,
             },
@@ -268,7 +268,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://placehold.co/600x400/1a1a1a/0ea5e9?text=Filtro+Oleo',
+              url: 'https://via.placeholder.com/600x400/1a1a1a/0ea5e9?text=Filtro+Oleo',
               alt: 'Filtro de Óleo',
               order: 0,
             },
@@ -302,7 +302,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://placehold.co/600x400/1a1a1a/f97316?text=Amortecedor+Fusca',
+              url: 'https://via.placeholder.com/600x400/1a1a1a/f97316?text=Amortecedor+Fusca',
               alt: 'Amortecedor Fusca',
               order: 0,
             },
@@ -329,7 +329,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://placehold.co/600x400/1a1a1a/0ea5e9?text=Bateria',
+              url: 'https://via.placeholder.com/600x400/1a1a1a/0ea5e9?text=Bateria',
               alt: 'Bateria 60Ah',
               order: 0,
             },
@@ -362,7 +362,7 @@ async function main() {
         images: {
           create: [
             {
-              url: 'https://placehold.co/600x400/1a1a1a/f97316?text=Farol+LED',
+              url: 'https://via.placeholder.com/600x400/1a1a1a/f97316?text=Farol+LED',
               alt: 'Farol LED',
               order: 0,
             },

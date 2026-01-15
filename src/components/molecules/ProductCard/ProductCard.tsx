@@ -1,5 +1,4 @@
 import React from 'react';
-import Image from 'next/image';
 import Card from '../../atoms/Card/Card';
 import Button from '../../atoms/Button/Button';
 import styles from './ProductCard.module.css';
@@ -40,13 +39,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       
       <div className={styles.image}>
         {imageUrl ? (
-          <Image 
+          <img 
             src={imageUrl} 
             alt={name} 
-            width={600} 
-            height={400} 
-            loading="lazy"
             className={styles.imageElement}
+            loading="lazy"
           />
         ) : (
           <div className={styles.placeholder}>📦</div>
