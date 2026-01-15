@@ -5,6 +5,9 @@ import { rateLimiter, RATE_LIMITS } from '@/lib/rate-limit';
 import { logger } from '@/lib/logger';
 import { handleApiError } from '@/lib/error-handler';
 
+// Força rota dinâmica (necessário para rate limiting)
+export const dynamic = 'force-dynamic';
+
 /**
  * API Route: GET /api/vehicles/manufacturers
  * Lista todos os fabricantes de veículos
